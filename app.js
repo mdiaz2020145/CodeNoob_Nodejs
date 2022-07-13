@@ -3,6 +3,7 @@ const cors=require('cors')
 var app = express()
 
 //Importaciones Rutas
+const UsuarioRutas = require("./src/routes/usuario.routes");
 
 //Middlewares -> INTERMEDIARIOS 
 app.use(express.urlencoded({ extended: false }));
@@ -12,6 +13,6 @@ app.use(express.json());
 app.use(cors());
 
 //Carga de rutas
-//app.use('/api');
+app.use('/api', UsuarioRutas);
 
 module.exports = app;

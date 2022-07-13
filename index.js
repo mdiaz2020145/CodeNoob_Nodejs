@@ -8,4 +8,7 @@ mongoose.connect('mongodb://localhost:27017/CodeNoob', {useNewUrlParser: true, u
     app.listen(3000, function () {
         console.log('Corriendo en el puerto 3000') 
     })
+
+     //UsuarioController.registrarSuperAdmin();
+
 }).catch(err => console.log(err))
