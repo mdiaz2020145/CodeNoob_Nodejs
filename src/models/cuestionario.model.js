@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const CuestionarioSchema = Schema({
-    cuestionario: String,
+    nombreCuestionario: String,
     numeroLeccion: Number,
     items: [{
         pregunta: String,

@@ -1,11 +1,12 @@
-const express=require('express')
-const cors=require('cors')
+const express = require('express')
+const cors = require('cors')
 var app = express()
 
 //Importaciones Rutas
 const UsuarioRutas = require("./src/routes/usuario.routes");
 const ProfesorRutas = require('./src/routes/profesor.routes');
-const CursosRutas=require("./src/routes/cursos.routes")
+const CursosRutas = require("./src/routes/cursos.routes")
+const CuestionarioRutas = require("./src/routes/cuestionario.routes")
 
 //Middlewares -> INTERMEDIARIOS 
 app.use(express.urlencoded({ extended: false }));
@@ -15,6 +16,6 @@ app.use(express.json());
 app.use(cors());
 
 //Carga de rutas
-app.use('/api', UsuarioRutas,ProfesorRutas, CursosRutas);
+app.use('/api', UsuarioRutas, ProfesorRutas, CursosRutas, CuestionarioRutas);
 
 module.exports = app;

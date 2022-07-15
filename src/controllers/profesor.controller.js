@@ -2,44 +2,44 @@ const Profesor = require('../models/profesor.model');
 const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('../services/jwt');
-underscore= require('underscore');
+underscore = require('underscore');
 
 
-function registrarProfesor(req,res){
+function registrarProfesor(req, res) {
     var parametros = req.body
     var profesorModelo = new Profesor();
 
-    if(parametros.nombreProfe,parametros.email,parametros.password){
+    if (parametros.nombreProfe, parametros.email, parametros.password) {
 
         profesorModelo.nombreProfe = parametros.nombreProfe;
         profesorModelo.email = parametros.email;
         profesorModelo.password = parametros.password;
         profesorModelo.rol = 'ROL_PROFESOR';
 
-        Profesor.find({nombreProfe:parametros.nombreProfe},(err,profesorRegistrado)=>{
+        Profesor.find({ nombreProfe: parametros.nombreProfe }, (err, profesorRegistrado) => {
             //if(profesorRegistrado.lenght == 0){
-                bcrypt.hash(parametros.password, null, null, (err, passwordEncriptada) => {
-                    profesorModelo.password = passwordEncriptada; 
-                    profesorModelo.save((err,profesorGuardado)=>{
-                        if (err) return res.status(500).send({ mensaje: 'No se realizo la accion' });
-                        if (!profesorGuardado) return res.status(404).send({ mensaje: 'No se agrego al usuario' });
-                        return res.status(201).send({ Profesor: profesorGuardado });
-                    })
-
+            bcrypt.hash(parametros.password, null, null, (err, passwordEncriptada) => {
+                profesorModelo.password = passwordEncriptada;
+                profesorModelo.save((err, profesorGuardado) => {
+                    if (err) return res.status(500).send({ mensaje: 'No se realizo la accion' });
+                    if (!profesorGuardado) return res.status(404).send({ mensaje: 'No se agrego al usuario' });
+                    return res.status(201).send({ Profesor: profesorGuardado });
                 })
+
+            })
             /*}else{
                 return res.status(500).send({ mensaje: 'Este nombre de profesor, ya  se encuentra en uso' });
             }*/
         })
-    }else{
+    } else {
         return res.status(500).send({ mensaje: 'Llene todos los campos' });
     }
 }
 
-function loginProfesor(req,res){
+function loginProfesor(req, res) {
     var parametros = req.body;
 
-    Profesor.findOne({email:parametros.email},(err,profesorEncontrado)=>{
+    Profesor.findOne({ email: parametros.email }, (err, profesorEncontrado) => {
         if (err) return res.status(500).send({ mensaje: 'Error en la peticion' });
         if (profesorEncontrado) {
             bcrypt.compare(parametros.password, profesorEncontrado.password,
@@ -66,11 +66,11 @@ function loginProfesor(req,res){
     })
 }
 
-function editarProfesor(req,res){
+function editarProfesor(req, res) {
     var idProfesor = req.params.idProfesor
     var parametros = req.body;
 
-    Profesor.findByIdAndUpdate(idProfesor,parametros,{new:true},(err,profesorActualizado)=>{
+    Profesor.findByIdAndUpdate(idProfesor, parametros, { new: true }, (err, profesorActualizado) => {
         if (err) return res.status(500).send({ mensaje: 'Error en la peticion' });
         if (!profesorActualizado) return res.status(404).send({ mensaje: 'Error al editar el profesor' });
         return res.status(200).send({ ProfesorEditado: profesorActualizado })
@@ -78,10 +78,10 @@ function editarProfesor(req,res){
 
 }
 
-function eliminarProfesor(req,res){
+function eliminarProfesor(req, res) {
     var idProfesor = req.params.idProfesor;
 
-    Profesor.findByIdAndDelete(idProfesor,(err,profesorEliminado)=>{
+    Profesor.findByIdAndDelete(idProfesor, (err, profesorEliminado) => {
         if (err) return res.status(500).send({ mensaje: 'Error en la peticion' });
         if (!profesorEliminado) return res.status(404).send({ mensaje: 'Error al eliminar el profesor' });
         return res.status(200).send({ ProfesorEliminado: profesorEliminado })
@@ -90,8 +90,8 @@ function eliminarProfesor(req,res){
 
 
 //Buscar Profesor 
-function buscarProfesor(req,res){
-    Profesor.find((err,profesorEncontrado)=>{
+function buscarProfesor(req, res) {
+    Profesor.find((err, profesorEncontrado) => {
         if (err) return res.send({ mensaje: "Error: " + err })
         for (let i = 0; i < profesorEncontrado.length; i++) {
 
@@ -101,17 +101,17 @@ function buscarProfesor(req,res){
 }
 
 //Buscar profesor ID 
-function buscarProfesorID(req,res){
+function buscarProfesorID(req, res) {
     var idProfesor = req.params.idProfesor;
 
-    Profesor.findById(idProfesor,(err,profesorEncontrado)=>{
+    Profesor.findById(idProfesor, (err, profesorEncontrado) => {
         if (err) return res.status(500).send({ mensaje: 'Error en la peticion' });
         if (!profesorEncontrado) return res.status(404).send({ mensaje: 'Error al obtener los datos del profesor' });
         return res.status(200).send({ ProfesorEncontrado: profesorEncontrado })
     })
 }
 
-module.exports={
+module.exports = {
     loginProfesor,
     registrarProfesor,
     editarProfesor,
