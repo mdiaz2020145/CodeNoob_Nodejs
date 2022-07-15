@@ -10,7 +10,7 @@ const CuestionarioSchema = Schema({
         puntosPregunta: Number
     }],
     total: Number,
-    idProfesor: { type: Schema.Types.ObjectId, ref: 'Usuarios' },
+    idProfesor: { type: Schema.Types.ObjectId, ref: 'Profesores' },
     idCurso: { type: Schema.Types.ObjectId, ref: 'Cursos' }
 })
 
