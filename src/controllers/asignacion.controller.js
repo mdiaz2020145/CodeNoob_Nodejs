@@ -5,16 +5,17 @@ function asignarCursos(req, res) {
     const parametros = req.body;
     const alumnoLog = req.user.sub;
     const AsignacionModel = new Asignacion();
+    var nombreCurso = req.params.nombreCurso
 
-    if (parametros.nombreCurso) {
+    if (nombreCurso) {
         Asignacion.find({ idAlumno: alumnoLog }).populate('idCurso').exec((err, asigancionEncontrada) => {
 
 
             for (let i = 0; i < asigancionEncontrada.length; i++) {
-                if (asigancionEncontrada[i].idCurso.nombreCurso === parametros.nombreCurso) return res.status(400).send({ mensaje: 'No puede asignarse al mimso curso dos veces' })
+                if (asigancionEncontrada[i].idCurso.nombreCurso === nombreCurso) return res.status(400).send({ mensaje: 'No puede asignarse al mimso curso dos veces' })
             }
 
-            Cursos.findOne({ nombreCurso: parametros.nombreCurso }, (err, cursoEncontrado) => {
+            Cursos.findOne({ nombreCurso: nombreCurso }, (err, cursoEncontrado) => {
                 if (err) return res.status(400).send({ mensaje: 'Error en la peticios' })
                 if (!cursoEncontrado) return res.status(400).send({ mensaje: 'Este curso, no existe' })
 
