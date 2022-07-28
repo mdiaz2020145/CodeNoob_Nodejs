@@ -7,10 +7,11 @@ const md_autenticacion_roles = require('../middlewares/roles');
 
 const api = express.Router();
 
-api.post('/agregarCurso',md_autenticacion.Auth, cursoController.agregarCurso);
-api.put('/editarCurso/:idCurso',[md_autenticacion.Auth],cursoController.editarCurso);
-api.delete('/eliminarCurso/:idCurso',[md_autenticacion.Auth],cursoController.eliminarCurso);
-api.get('/buscarCursos',cursoController.buscarCursos); 
-api.get('/buscarCursoId/:idCurso',[md_autenticacion.Auth],cursoController.buscarCursoId);
+api.post('/agregarCurso', md_autenticacion.Auth, cursoController.agregarCurso);
+api.put('/editarCurso/:idCurso', [md_autenticacion.Auth], cursoController.editarCurso);
+api.delete('/eliminarCurso/:idCurso', [md_autenticacion.Auth], cursoController.eliminarCurso);
+api.get('/buscarCursos', cursoController.buscarCursos);
+api.get('/buscarCursoId/:idCurso', [md_autenticacion.Auth], cursoController.buscarCursoId);
+api.get('/buscarCursosCreados', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], cursoController.buscarCursosCreados)
 
 module.exports = api;

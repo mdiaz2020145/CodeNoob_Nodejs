@@ -9,8 +9,10 @@ function crearCuestionario(req, res) {
         Cuestionario.findOne({ nombreCuestionario: params.nombreCuestionario }, (err, cuestionarioEncontrado) => {
             if (err) return res.status(404).send({ mensaje: 'Error en la peticion' })
             if (underscore.isEmpty(cuestionarioEncontrado)) {
+                console.log("nobre curso " + params.nombreCurso)
                 Cursos.findOne({ nombreCurso: params.nombreCurso }, (err, cursoEncontrado) => {
                     if (err) return res.status(404).send({ mensaje: 'Error en la peticion' })
+                    console.log(cursoEncontrado)
                     if (!cursoEncontrado) return res.status(404).send({ mensaje: 'Curso no encontrado' })
                     let cursoModel = Cuestionario();
                     cursoModel.nombreCuestionario = params.nombreCuestionario;
@@ -37,23 +39,20 @@ function crearCuestionario(req, res) {
 // TODO: hacer un eliminar cuestionario
 
 function eliminarCuestionario(req, res) {
-    let idCuestinario = req.params.idCuestinario
-    if (params.nombreCuestionario) {
-        Cuestionario.findByIdAndDelete(idCuestinario, (err, cuestionarioEliminado) => {
-            if (err) return res.status(404).send({ mensaje: 'Error en la peticion' })
-            if (!cuestionarioEliminado) return res.status(404).send({ mensaje: 'No se elimino el cuestionario' })
+    let idCuestinario = req.params.idCuestionario
+    Cuestionario.findByIdAndDelete(idCuestinario, (err, cuestionarioEliminado) => {
+        if (err) return res.status(404).send({ mensaje: 'Error en la peticion' })
+        if (!cuestionarioEliminado) return res.status(404).send({ mensaje: 'No se elimino el cuestionario' })
 
-            return res.status(200).send({ mensaje: 'Se ha eliminado con exito', cuestionario: cuestionarioEliminado })
-        })
-    } else {
-        return res.status(404).send({ mensaje: "No has llenado todos los datos" })
-    }
+        return res.status(200).send({ mensaje: 'Se ha eliminado con exito', cuestionario: cuestionarioEliminado })
+    })
 }
 
 // TODO: hacer un editar cuestionario
 function editarCuestionario(req, res) {
     let params = req.body;
-    let idCuestinario = req.params.idCuestinario
+    let idCuestinario = req.params.idCuestionario
+    console.log(params.nombreCuestionario)
     if (params.nombreCuestionario) {
         Cuestionario.findByIdAndUpdate(idCuestinario, params, { new: true }, (err, cuestionarioEditado) => {
             if (err) return res.status(404).send({ mensaje: 'Error en la peticion' })
@@ -108,19 +107,30 @@ function agregarRespuestas(req, res) {
 
 function eliminarRespuestas(req, res) {
     let params = req.body;
+    let cantidadRestar = 0;
+    console.log(params)
     let idCuestionario = req.params.idCuestionario
     if (params.pregunta) {
         Cuestionario.findOne({ _id: idCuestionario, idProfesor: req.user.sub, items: { $elemMatch: { pregunta: params.pregunta } } },
             (err, preguntaBuscada) => {
                 if (err) return res.status(404).send({ mensaje: 'Error en la peticion' + "1 " + err });
                 if (preguntaBuscada) {
+                    console.log("pregunta buscada" + preguntaBuscada)
+                    console.log("pregunta pregunta" + params.pregunta)
+                    for (let i = 0; i < preguntaBuscada.items.length; i++) {
+                        console.log("preguntaBuscada.items[i].pregunta" + preguntaBuscada.items[i].pregunta)
+                        if (preguntaBuscada.items[i].pregunta === params.pregunta) {
+                            cantidadRestar = preguntaBuscada.items[i].puntosPregunta
+                        }
+                    }
                     Cuestionario.findOneAndUpdate({ _id: idCuestionario, idProfesor: req.user.sub, items: { $elemMatch: { pregunta: params.pregunta } } },
                         { $pull: { items: { pregunta: params.pregunta } } },
                         (err, preguntaEliminada) => {
+                            console.log("preguntaEliminada" + preguntaEliminada)
                             if (err) return res.status(404).send({ mensaje: 'Error en la peticion' + "2 " + err });
                             if (!preguntaEliminada) return res.status(404).send({ mensaje: 'No se ha podido eliminar su pregunta.' })
                             Cuestionario.findOneAndUpdate({ _id: idCuestionario, idProfesor: req.user.sub },
-                                { $inc: { total: (preguntaEliminada.total * -1) } }, (err, dismucionEliminado) => {
+                                { $inc: { total: (cantidadRestar * -1) } }, (err, dismucionEliminado) => {
                                     if (err) return res.status(404).send({ mensaje: 'Error en la peticion' });
                                     if (!dismucionEliminado) return res.status(404).send({ mensaje: 'Error al disminuir la cantidad' })
                                     return res.status(200).send({ mensaje: 'Se agregado correctamente', cuestionario: preguntaEliminada })
@@ -140,23 +150,23 @@ function eliminarRespuestas(req, res) {
 function editarRespuestas(req, res) {
     let params = req.body;
     let idCuestionario = req.params.idCuestionario
-    let puntosPreguntoAnterior = 0;
+    let puntosPreguntaAnterior = 0;
     if (params.pregunta || params.respuesta || params.puntosPregunta) {
-        Cuestionario.findOne({ _id: idCuestionario, idProfesor: req.user.sub, items: { $elemMatch: { pregunta: params.pregunta } } },
+        Cuestionario.findOne({ _id: idCuestionario, idProfesor: req.user.sub, items: { $elemMatch: { pregunta: params.preguntaAnterior } } },
             (err, preguntaBuscada) => {
                 if (err) return res.status(404).send({ mensaje: 'Error en la peticion' });
                 if (preguntaBuscada) {
                     if (params.puntosPregunta) {
                         for (let i = 0; i < preguntaBuscada.items.length; i++) {
                             if (params.pregunta === preguntaBuscada.items[i].pregunta) {
-                                puntosPreguntoAnterior = parseInt(preguntaBuscada.items[i].puntosPregunta) * -1;
+                                puntosPreguntaAnterior = parseInt(preguntaBuscada.items[i].puntosPregunta) * -1;
                             }
                         }
-                        console.log(puntosPreguntoAnterior)
-                        Cuestionario.findOneAndUpdate({ _id: idCuestionario, idProfesor: req.user.sub }, { $inc: { total: puntosPreguntoAnterior } }, { new: true }, (err, datosIncrementados) => {
+                        console.log(puntosPreguntaAnterior)
+                        Cuestionario.findOneAndUpdate({ _id: idCuestionario, idProfesor: req.user.sub }, { $inc: { total: puntosPreguntaAnterior } }, { new: true }, (err, datosIncrementados) => {
                             if (err) return res.status(404).send({ mensaje: 'Error en la peticion' + "1 " + err });
                             if (!datosIncrementados) return res.status(404).send({ mensaje: 'No se agregado su pregunta el cuestionario' })
-                            Cuestionario.findOneAndUpdate({ _id: idCuestionario, idProfesor: req.user.sub, items: { $elemMatch: { pregunta: params.pregunta } } }, {
+                            Cuestionario.findOneAndUpdate({ _id: idCuestionario, idProfesor: req.user.sub, items: { $elemMatch: { pregunta: params.preguntaAnterior } } }, {
                                 "items.$.pregunta": params.pregunta, "items.$.respuesta": params.respuesta, "items.$.puntosPregunta": params.puntosPregunta
                             }, { new: true },
                                 (err, preguntaAgregada) => {
@@ -171,7 +181,7 @@ function editarRespuestas(req, res) {
                                 })
                         })
                     } else {
-                        Cuestionario.findOneAndUpdate({ _id: idCuestionario, idProfesor: req.user.sub, items: { $elemMatch: { pregunta: params.pregunta } } }, {
+                        Cuestionario.findOneAndUpdate({ _id: idCuestionario, idProfesor: req.user.sub, items: { $elemMatch: { pregunta: params.preguntaAnterior } } }, {
                             "items.$.pregunta": params.pregunta, "items.$.respuesta": params.respuesta, "items.$.puntosPregunta": params.puntosPregunta
                         }, { new: true },
                             (err, preguntaAgregada) => {
@@ -210,6 +220,41 @@ function buscarTodo(req, res) {
     })
 }
 
+function buscarSoloPorId(req, res) {
+    let idCuestionario = req.params.idCuestionario
+    Cuestionario.findById(idCuestionario, (err, cuestionarioEncontrado) => {
+        if (err) return res.status(404).send({ mensaje: 'Error en la peticion' });
+        if (!cuestionarioEncontrado) return res.status(404).send({ mensaje: 'No se puede encontrar el cuestionario' })
+
+        return res.status(200).send({ cuestionario: cuestionarioEncontrado })
+    })
+}
+
+function buscarPreguntas(req, res) {
+    let idCuestionario = req.params.idCuestionario
+    Cuestionario.findOne({ _id: idCuestionario, items: { $elemMatch: {} } }, (err, preguntasEncontradas) => {
+        if (err) return res.status(404).send({ mensaje: 'Error en la peticion' });
+        return res.status(200).send({ pregunta: preguntasEncontradas })
+    })
+}
+
+function buscarPreguntaId(req, res) {
+    let datosNuevos;
+    let params = req.body;
+    let idCuestionario = req.params.idCuestionario
+    console.log(params)
+    Cuestionario.findOne({ _id: idCuestionario, items: { $elemMatch: { _id: params._id, pregunta: params.pregunta } } }, (err, preguntasEncontradas) => {
+        if (err) return res.status(404).send({ mensaje: 'Error en la peticion' });
+        // if (!preguntasEncontradas) return res.status(404).send({ mensaje: 'No pose preguntas aun el cuestionario' })
+        for (let i = 0; i <= preguntasEncontradas.items.length; i++) {
+            if (preguntasEncontradas.items[i]._id == params._id) {
+                datosNuevos = preguntasEncontradas.items[i]
+                return res.status(200).send({ pregunta: datosNuevos })
+            }
+        }
+    })
+}
+
 module.exports = {
     crearCuestionario,
     editarCuestionario,
@@ -218,6 +263,8 @@ module.exports = {
     editarRespuestas,
     eliminarRespuestas,
     buscarPorId,
-    buscarTodo
-
+    buscarTodo,
+    buscarSoloPorId,
+    buscarPreguntas,
+    buscarPreguntaId
 }

@@ -7,8 +7,8 @@ const md_autenticacion_roles = require('../middlewares/roles');
 
 const api = express.Router();
 api.post('/agregarCuestionario', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], CuestionarioController.crearCuestionario)
-api.put('/eliminarCuestionario', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], CuestionarioController.eliminarCuestionario)
-api.post('/editarCuestionario', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], CuestionarioController.editarCuestionario)
+api.delete('/eliminarCuestionario/:idCuestionario', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], CuestionarioController.eliminarCuestionario)
+api.put('/editarCuestionario/:idCuestionario', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], CuestionarioController.editarCuestionario)
 
 api.put('/agregarPreguntas/:idCuestionario', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], CuestionarioController.agregarRespuestas)
 api.put('/editarPreguntas/:idCuestionario', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], CuestionarioController.editarRespuestas)
@@ -16,4 +16,8 @@ api.put('/eliminarPreguntas/:idCuestionario', [md_autenticacion.Auth, md_autenti
 
 api.get('/buscarPorId', [md_autenticacion.Auth, md_autenticacion_roles.verProfesor], CuestionarioController.buscarPorId)
 api.get('/buscarCuestionarios', CuestionarioController.buscarTodo)
+api.get('/buscarSoloPorId/:idCuestionario', CuestionarioController.buscarSoloPorId)
+
+api.get('/preguntasEncontradas/:idCuestionario', CuestionarioController.buscarPreguntas)
+api.post('/buscarPreguntaId/:idCuestionario', CuestionarioController.buscarPreguntaId)
 module.exports = api;
