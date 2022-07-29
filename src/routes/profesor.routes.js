@@ -11,7 +11,7 @@ api.post('/registrarProfesor',profesorController.registrarProfesor);
 api.post('/loginProfesor',profesorController.loginProfesor);
 api.put('/editarProfesor/:idProfesor',[md_autenticacion.Auth],profesorController.editarProfesor);
 api.delete('/eliminarProfesor/:idProfesor',[md_autenticacion.Auth],profesorController.eliminarProfesor);
-api.get('/buscarProfesor',[md_autenticacion.Auth],profesorController.buscarProfesor); 
-api.get('/buscarProfesorID/:idProfesor',[md_autenticacion.Auth],profesorController.buscarProfesorID);
+api.get('/buscarProfesor' ,profesorController.buscarProfesor); 
+api.get('/buscarProfesorID/:idProfesor' ,profesorController.buscarProfesorID);
 
 module.exports = api;

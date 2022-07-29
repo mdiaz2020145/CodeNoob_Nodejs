@@ -120,7 +120,9 @@ function buscarAlumno(req, res) {
         }
         return res.status(200).send({ AlumnoEncontrado: alumnoEncontrado })
     })
+    
 }
+
 
 //Buscar alumno por ID
 function buscarAlumnoID(req, res) {
