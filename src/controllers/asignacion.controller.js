@@ -6,7 +6,7 @@ function asignarCursos(req, res) {
     const AsignacionModel = new Asignacion();
     var idCurso = req.params.idCurso
 
-    Asignacion.find({ idAlumno: alumnoLog },(err, asigancionEncontrada) => {
+    Asignacion.find({ idAlumno: alumnoLog }, (err, asigancionEncontrada) => {
 
 
         for (let i = 0; i < asigancionEncontrada.length; i++) {
@@ -61,9 +61,18 @@ function buscarAsginacionId(req, res) {
 
 }
 
+function buscarAsginacionIdAlumnos(req, res) {
+    Asignacion.find({ idAlumno: req.user.sub }, (err, asignacionEncontrada) => {
+        if (err) return res.status(500).send({ mensaje: 'Error en la peticion' });
+        if (!asignacionEncontrada) return res.status(404).send({ mensaje: 'Error al encontrar la asignacion' });
+        return res.status(200).send({ Asignacion: asignacionEncontrada })
+    })
+}
+
 module.exports = {
     asignarCursos,
     buscarAsignacion,
     buscarAsginacionId,
-    eliminarAsignacion
+    eliminarAsignacion,
+    buscarAsginacionIdAlumnos
 }

@@ -20,4 +20,5 @@ api.get('/buscarSoloPorId/:idCuestionario', CuestionarioController.buscarSoloPor
 
 api.get('/preguntasEncontradas/:idCuestionario', CuestionarioController.buscarPreguntas)
 api.post('/buscarPreguntaId/:idCuestionario', CuestionarioController.buscarPreguntaId)
+api.get('/burcarPorCurso/:idCurso', CuestionarioController.buscarCuestionarioCurso)
 module.exports = api;

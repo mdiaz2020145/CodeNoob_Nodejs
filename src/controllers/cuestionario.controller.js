@@ -255,6 +255,15 @@ function buscarPreguntaId(req, res) {
     })
 }
 
+function buscarCuestionarioCurso(req, res) {
+    let idCur = req.params.idCurso;
+    Cuestionario.find({ idCurso: idCur }, (err, cuestionariosEncontrados) => {
+        if (err) return res.status(404).send({ mensaje: 'Error en la peticion' });
+        if (!cuestionariosEncontrados) return res.status(404).send({ mensaje: 'No se encontro el cuestionario' })
+        return res.status(200).send({ pregunta: cuestionariosEncontrados })
+    })
+}
+
 module.exports = {
     crearCuestionario,
     editarCuestionario,
@@ -266,5 +275,6 @@ module.exports = {
     buscarTodo,
     buscarSoloPorId,
     buscarPreguntas,
-    buscarPreguntaId
+    buscarPreguntaId,
+    buscarCuestionarioCurso,
 }
