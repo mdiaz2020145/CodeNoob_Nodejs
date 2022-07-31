@@ -6,6 +6,6 @@ const md_autenticacion_roles = require('../middlewares/roles');
 
 const api = express.Router();
 
-api.post('/respuestaIngresada',md_autenticacion.Auth,RespuestaController.respuestaAlumno);
+api.post('/respuestasAlumno/:idCuestionario',md_autenticacion.Auth,RespuestaController.respuestaAlumno);
 
 module.exports = api;

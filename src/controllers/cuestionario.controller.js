@@ -6,7 +6,7 @@ const underscore = require('underscore')
 function crearCuestionario(req, res) {
     let params = req.body;
     if (params.nombreCuestionario && params.numeroLeccion && params.nombreCurso) {
-        Cuestionario.findOne({ nombreCuestionario: params.nombreCuestionario }, (err, cuestionarioEncontrado) => {
+        Cuestionario.findOne({ nombreCuestionario: params.nombreCuestionario, idProfesor: req.user.sub }, (err, cuestionarioEncontrado) => {
             if (err) return res.status(404).send({ mensaje: 'Error en la peticion' })
             if (underscore.isEmpty(cuestionarioEncontrado)) {
                 console.log("nobre curso " + params.nombreCurso)
